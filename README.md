@@ -13,7 +13,7 @@ https://kailo.fit/mcp
 | **Endpoint** | `https://kailo.fit/mcp` |
 | **Transport** | Streamable HTTP |
 | **Auth** | OAuth 2.1 — PKCE + Dynamic Client Registration |
-| **Tools** | 43 public |
+| **Tools** | 61 public |
 | **Account** | Free at [kailo.fit](https://kailo.fit) |
 
 ---
@@ -73,56 +73,33 @@ Point your client at `https://kailo.fit/mcp`. Discovery documents are public:
 
 ## Tools
 
-43 tools are available to every connected account. Tools marked **[Pro]** require a Kailo Pro subscription; everything else is free.
+61 tools are available to every connected account. Tools marked **[Pro]** require a Kailo Pro subscription; everything else is free.
 
-### Activity & health data (9)
+### Activity data & predictions (9)
 
 | Tool | What it does |
 | --- | --- |
-| `context_get_activity_summary` | Get detailed Strava activity summary including distance, pace, heart rate, elevation, and power data. |
 | `context_get_activity_streams` | Get time-series data for a SINGLE activity (heart rate, pace, GPS, elevation, cadence, power). WARNING: Do NOT use for batch analysis across many... |
-| `context_list_activities` | List all Strava activities with pagination. Browse complete running, cycling, and workout history. |
+| `context_get_activity_summary` | Get detailed Strava activity summary including distance, pace, heart rate, elevation, and power data. |
 | `context_get_authorized_data` | Check Strava connection status, plus Apple Health and Wahoo. See every fitness data source linked to Kailo, the channel each arrives on, and which one... |
-| `context_get_period_summary` | Get Strava training stats for a time period. Returns total mileage, time, pace averages, and activity breakdown. |
+| `context_get_marathon_prediction` | Get KAILO's marathon time predictions for a date range — computed by Kailo's own versioned model (`model_version` in the response) from the user's... |
 | `context_get_marathon_training_benchmarks` | Call this before creating or evaluating a marathon training plan. Returns observational 16-week percentile curves derived from thousands of... |
+| `context_get_period_summary` | Get Strava training stats for a time period. Returns total mileage, time, pace averages, and activity breakdown. |
 | `context_get_schema` | Get available Strava activity types and field values. Discover what activity categories, stream types, and filters are available. |
 | `context_get_subscription_status` | Check whether the current user has an active Pro subscription. Pro is required for all dataset_*, compute_*, and sheets_* tools. Use this to debug... |
-| `context_get_marathon_prediction` | Get KAILO's marathon time predictions for a date range — computed by Kailo's own versioned model (`model_version` in the response) from the user's... |
-
-### Python compute sessions (9)
-
-| Tool | What it does |
-| --- | --- |
-| `compute_start_session` | [Pro] Start an isolated Python kernel. Only pandas, numpy, and pyarrow are pre-installed — for anything else (scipy, sklearn, matplotlib, etc.) pass it... |
-| `compute_session_status` | [Pro] Get current compute session status including available variables, installed packages, and session info. IMPORTANT: Wait at least 30 seconds... |
-| `compute_end_session` | [Pro] Terminate the compute session and cleanup resources. Variables and state will be lost. |
-| `compute_execute` | [Pro] Execute Python code for numerical analysis; variables persist between executions. Report findings to the user as text in your response — print... |
-| `compute_get_variable` | [Pro] Get the value of a variable from the session. Supports different output formats for DataFrames. |
-| `compute_install_package` | [Pro] Install a pip package in the session. |
-| `compute_list_packages` | [Pro] List all installed packages in the session. |
-| `compute_list_files` | [Pro] List files written to the compute session working directory. Any file saved during code execution (plots, CSVs, exports, etc.) appears here. Also... |
-| `compute_read_file` | [Pro] Read a text file (CSV, JSON, TXT) from the compute session working directory back into your context — e.g. to inspect a CSV you just wrote. Do... |
-
-### Datasets (4)
-
-| Tool | What it does |
-| --- | --- |
-| `dataset_list` | [Pro] List accessible datasets (your own, shared with you, and public datasets). To load in compute session: download_dataset('name', 'name.parquet');... |
-| `dataset_info` | [Pro] Get detailed information about a dataset including schema, row count, columns, and usage instructions. Returns a 'usage' field showing exactly... |
-| `dataset_delete` | [Pro] Delete a dataset you own. This cannot be undone. |
-| `dataset_save_activities` | [Pro] Save Strava activities as Parquet datasets. Use include_streams=true for detailed analysis (hill climbing, pacing, HR zones). Creates two... |
+| `context_list_activities` | List all Strava activities with pagination. Browse complete running, cycling, and workout history. |
 
 ### Route building (7)
 
 | Tool | What it does |
 | --- | --- |
-| `route_start` | Start a new route-builder draft. Returns a builder_url the user can open to watch the route render live as you append waypoints. **Always paste the... |
 | `route_add_waypoint` | Append a waypoint to the user's active route-builder draft. The new leg is routed from the previous waypoint via Mapbox using the draft's profile... |
+| `route_finalize` | Publish the user's active route draft into an immutable Course. When push_to_garmin=true, the publish is followed by a chained course_push_to_garmin... |
+| `route_find_places` | Find POIs of a given category near a point — e.g. coffee shops near the Marina. Returns up to `limit` candidates with name, address, lat/lng, and... |
+| `route_fork_from_course` | Open a finalized course (a published route) for editing by forking it into a fresh route-builder draft owned by the current user. Returns a builder_url... |
 | `route_get_status` | Return the user's active route-builder draft — profile, current waypoints, totals (distance + elevation gain estimate), and a compact polyline. Use... |
 | `route_pop_waypoint` | Drop the last waypoint from the user's active route draft. Use this when an :add hit a bad path or the user changed their mind about the last leg — no... |
-| `route_find_places` | Find POIs of a given category near a point — e.g. coffee shops near the Marina. Returns up to `limit` candidates with name, address, lat/lng, and... |
-| `route_finalize` | Publish the user's active route draft into an immutable Course. When push_to_garmin=true, the publish is followed by a chained course_push_to_garmin... |
-| `route_fork_from_course` | Open a finalized course (a published route) for editing by forking it into a fresh route-builder draft owned by the current user. Returns a builder_url... |
+| `route_start` | Start a new route-builder draft. Returns a builder_url the user can open to watch the route render live as you append waypoints. **Always paste the... |
 
 ### Structured workouts (5)
 
@@ -138,11 +115,11 @@ Point your client at `https://kailo.fit/mcp`. Discovery documents are public:
 
 | Tool | What it does |
 | --- | --- |
+| `training_plan_activate` | Make a DRAFT training plan the user's active plan — what their plan page shows, what activities reconcile against, and what can be pushed to their... |
+| `training_plan_add_week` | Append a week to a DRAFT plan you previously created (or replace an existing week with the same number). Provide plan_id, the 1-based week number, and... |
 | `training_plan_create` | Persist a training plan that YOU have designed into the user's account as a draft. First reason out the full schedule yourself (weeks → days →... |
 | `training_plan_get` | Read a training plan back with its full week-by-week schedule and the markdown context (plan narrative, per-week focus, per-day coaching notes) you... |
 | `training_plan_update_workout` | Re-author a single day in a DRAFT plan you previously created. Identify the day by plan_id, week (1-based) and day (weekday, e.g. 'Thu'). Provide... |
-| `training_plan_add_week` | Append a week to a DRAFT plan you previously created (or replace an existing week with the same number). Provide plan_id, the 1-based week number, and... |
-| `training_plan_activate` | Make a DRAFT training plan the user's active plan — what their plan page shows, what activities reconcile against, and what can be pushed to their... |
 
 ### Courses (2)
 
@@ -151,16 +128,57 @@ Point your client at `https://kailo.fit/mcp`. Discovery documents are public:
 | `course_push_to_garmin` | Send one of the user's GetFast courses to their Garmin Connect account. The watch picks it up on the next sync. Requires the user to have linked Garmin... |
 | `course_remove_from_garmin` | Remove a previously-pushed course from the user's Garmin Connect account. No-op success if the course was never pushed. Does not affect the local... |
 
-### Backfill (1)
+### Google Sheets (18)
+
+| Tool | What it does |
+| --- | --- |
+| `sheets_add_tab` | [Pro] Add a new tab to a registered spreadsheet. Returns the Google `sheet_id` you'll need for rename/delete/duplicate. |
+| `sheets_append_values` | [Pro] Append rows below the table anchored at `range`. Google walks downward to find the first empty row; the anchor doesn't have to be the literal... |
+| `sheets_batch_format` | [Pro] Apply up to 50 styling ops in one Google call. Each item is `{range, format?, borders?, merge?}` (same fields as `format_cells`); 1 rate-limit... |
+| `sheets_batch_read_values` | [Pro] Read up to 50 A1 ranges in a single Google call (one rate-limit token total). Truncation is cumulative across ranges; `next_cursor` resumes... |
+| `sheets_batch_update_values` | [Pro] Write up to 50 ranges in one Google call. Each item is `{range, values}`; the call is atomic from Google's rate-limit POV (1 token total). |
+| `sheets_clear_values` | [Pro] Clear all values from an A1 range. |
+| `sheets_create_spreadsheet` | [Pro] Create a new Google Sheet (under the calling user's linked Google OAuth) and register it in one call. |
+| `sheets_delete_tab` | [Pro] Delete a tab. Refused with `cannot_delete_last_tab` if it's the only tab; add a new tab first then retry. |
+| `sheets_duplicate_tab` | [Pro] Duplicate `tab_id` to a new tab. Omit `new_title` to let Google name it `Copy of …`. |
+| `sheets_format_cells` | [Pro] Style one range: background/text color, bold/italic, alignment, wrap, number format, borders, and/or merge. Set at least one of... |
+| `sheets_freeze_dimensions` | [Pro] Freeze the first N rows and/or columns of a tab so they stay visible while scrolling. `tab_id` is the numeric `sheet_id`; pass 0 to unfreeze an axis. |
+| `sheets_get_metadata` | [Pro] Fetch the live spreadsheet metadata (title, locale, tabs). Returns up to `max_tabs` tabs per call; use the opaque `next_cursor` to page through... |
+| `sheets_list_spreadsheets` | [Pro] List the calling user's registered spreadsheets, cursor paginated. Returns `registration_id`, `google_spreadsheet_id`, cached `title`, and the... |
+| `sheets_read_values` | [Pro] Read one A1 range. The response is sliced at a row boundary so it fits in `max_cells` total cells; use `next_cursor` to resume reading the rest.... |
+| `sheets_register_spreadsheet` | [Pro] Register an existing Google Sheet under the calling user. The spreadsheet must already be accessible to the user's linked Google OAuth credential. |
+| `sheets_rename_tab` | [Pro] Rename a tab. `tab_id` is the numeric `sheet_id` returned by `get_metadata` or any of the tab ops (stable across renames; the visible name is the... |
+| `sheets_unregister_spreadsheet` | [Pro] Soft-delete the registration (the Google sheet itself is untouched). Pass `expected_version` for OCC — get it from the most recent... |
+| `sheets_update_values` | [Pro] Overwrite a single range with a 2D array of values. |
+
+### Python compute sessions (9)
+
+| Tool | What it does |
+| --- | --- |
+| `compute_end_session` | [Pro] Terminate the compute session and cleanup resources. Variables and state will be lost. |
+| `compute_execute` | [Pro] Execute Python code for numerical analysis; variables persist between executions. Report findings to the user as text in your response — print... |
+| `compute_get_variable` | [Pro] Get the value of a variable from the session. Supports different output formats for DataFrames. |
+| `compute_install_package` | [Pro] Install a pip package in the session. |
+| `compute_list_files` | [Pro] List files written to the compute session working directory. Any file saved during code execution (plots, CSVs, exports, etc.) appears here. Also... |
+| `compute_list_packages` | [Pro] List all installed packages in the session. |
+| `compute_read_file` | [Pro] Read a text file (CSV, JSON, TXT) from the compute session working directory back into your context — e.g. to inspect a CSV you just wrote. Do... |
+| `compute_session_status` | [Pro] Get current compute session status including available variables, installed packages, and session info. IMPORTANT: Wait at least 30 seconds... |
+| `compute_start_session` | [Pro] Start an isolated Python kernel. Only pandas, numpy, and pyarrow are pre-installed — for anything else (scipy, sklearn, matplotlib, etc.) pass it... |
+
+### Datasets (4)
+
+| Tool | What it does |
+| --- | --- |
+| `dataset_delete` | [Pro] Delete a dataset you own. This cannot be undone. |
+| `dataset_info` | [Pro] Get detailed information about a dataset including schema, row count, columns, and usage instructions. Returns a 'usage' field showing exactly... |
+| `dataset_list` | [Pro] List accessible datasets (your own, shared with you, and public datasets). To load in compute session: download_dataset('name', 'name.parquet');... |
+| `dataset_save_activities` | [Pro] Save Strava activities as Parquet datasets. Use include_streams=true for detailed analysis (hill climbing, pacing, HR zones). Creates two... |
+
+### Settings & data (2)
 
 | Tool | What it does |
 | --- | --- |
 | `data_recompute_race_predictions` | Clear and recompute the user's recent marathon prediction history (up to the last 60 days, clamped to their plan's history window) from their current... |
-
-### Settings (1)
-
-| Tool | What it does |
-| --- | --- |
 | `settings_set_race_prediction_source` | Change which connected provider's activity data feeds Kailo's race prediction model (the predictions themselves are always Kailo's). This is the... |
 
 ---
