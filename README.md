@@ -234,6 +234,7 @@ Access is per-user and revocable at any time from your Kailo account settings.
 - **Documentation** — [kailo.fit/docs/claude](https://kailo.fit/docs/claude)
 - **Privacy policy** — [kailo.fit/privacy](https://kailo.fit/privacy)
 - **Support** — [support@kailo.fit](mailto:support@kailo.fit)
+- **Smithery listing** — [smithery.ai/servers/kailo/kailo](https://smithery.ai/servers/kailo/kailo)
 
 ---
 
